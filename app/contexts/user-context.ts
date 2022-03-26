@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { User } from "remix.env";
+import type { User } from "~/types/all";
 
 interface UserContext {
   user: User;

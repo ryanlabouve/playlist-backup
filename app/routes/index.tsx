@@ -22,7 +22,9 @@ export default function Index() {
 
   useEffect(() => {
     const hash: string = window?.location?.hash || "";
-    let token: string = `${window.localStorage.getItem("token")}`;
+    let token: string = window.localStorage.getItem("token")
+      ? `${window.localStorage.getItem("token")}`
+      : "";
 
     if (!token && hash) {
       // @ts-ignore
@@ -42,7 +44,7 @@ export default function Index() {
   }, [user.accessToken]);
 
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
+    <div>
       {!user.accessToken && (
         <a
           href={`${data.SPOTIFY_AUTH_ENDPOINT}?client_id=${data.SPOTIFY_CLIENT_ID}&redirect_uri=${data.SPOTIFY_REDIRECT_URI}&response_type=${data.SPOTIFY_RESPONSE_TYPE}`}

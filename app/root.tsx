@@ -14,7 +14,7 @@ import type { LoaderFunction } from "remix";
 import type { MetaFunction } from "remix";
 import { UserContext } from "./contexts/user-context";
 import { useState } from "react";
-import type { User } from "remix.env";
+import type { User } from "~/types/all";
 
 export const meta: MetaFunction = () => {
   return { title: "New Remix App" };
@@ -25,7 +25,11 @@ export const loader: LoaderFunction = async () => {
     SPOTIFY_AUTH_ENDPOINT: process.env.SPOTIFY_AUTH_ENDPOINT,
   });
 };
+import styles from "./styles/app.css";
 
+export function links() {
+  return [{ rel: "stylesheet", href: styles }];
+}
 export default function App() {
   const data = useLoaderData();
   const [user, setUser] = useState<User>({});

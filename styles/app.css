@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: monaco, Consolas, "Lucida Console", monospace;
+  color: #f2f2fd;
+  @apply bg-gray-900 text-xs;
+}
+
+.nerd-green {
+  color: #21d635;
+}
+
+.panel-bg {
+  background: linear-gradient(
+    111.68deg,
+    #303141 1.12%,
+    #444355 48.94%,
+    #181721 100%
+  );
+
+  box-shadow: inset 2px 0px 0px rgba(255, 255, 255, 0.25),
+    inset 0px 2px 0px rgba(255, 255, 255, 0.15),
+    inset -2px 0px 0px rgba(0, 0, 0, 0.25),
+    inset 0px -2px 0px rgba(0, 0, 0, 0.15);
+}
+
+.panel-bg-dark {
+  @apply nerd-green;
+  background: linear-gradient(111.68deg, #232323 1.12%, #000000 100%);
+
+  box-shadow: inset -2px 0px 4px rgba(255, 255, 255, 0.2),
+    inset 0px -2px 4px rgba(255, 255, 255, 0.2),
+    inset 2px 0px 24px rgba(0, 0, 0, 0.55), inset 0px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.indent-text {
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.7);
+}
