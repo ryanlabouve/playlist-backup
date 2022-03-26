@@ -80,7 +80,7 @@ export default function BackupWizard() {
   return (
     <div className="flex p-12">
       <div className="p-3 panel-bg">
-        <div className="text-center pb-2 uppercase indent-text flex justify-center align-middle items-center">
+        <div className="text-center uppercase indent-text flex justify-center align-middle items-center">
           <svg
             width="150"
             height="6"
@@ -102,6 +102,14 @@ export default function BackupWizard() {
             <rect y="3" width="150" height="3" fill="#CEBB77" />
             <rect width="150" height="3" fill="#9F915C" />
           </svg>
+        </div>
+        <div className="flex  items-center align-middle">
+          <div>
+            <div className="dark-boubble">999</div>Boop
+          </div>
+          <button className="btn my-2">
+            <div className="bobble"></div> Logout
+          </button>
         </div>
         <div className="bg-gray-900 p-0.5">
           <div className="p-3 panel-bg">
