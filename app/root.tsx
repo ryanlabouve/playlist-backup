@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 import type { User } from "~/types/all";
 
 export const meta: MetaFunction = () => {
-  return { title: "New Remix App" };
+  return { title: "Spotify.Bak | Backup your favorite spotify playlist" };
 };
 
 import styles from "./styles/app.css";
