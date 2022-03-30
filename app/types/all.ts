@@ -28,7 +28,7 @@ export interface PlaylistMeta {
   offset: number;
   previous: string;
   next: string;
-  limit: string;
+  limit: number;
   href: string;
   total: number;
 }

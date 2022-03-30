@@ -124,10 +124,26 @@ async function prepareBackup(
   selectedPlaylist: Playlist,
   selectedPlaylistMeta: PlaylistMeta
 ): Promise<any> {
-  let tracks = initialTracks || [];
+  let tracks: Track[] = initialTracks || [];
 
   if (selectedPlaylistMeta.next) {
-    // Build more tracks
+    let currentOffset =
+      selectedPlaylistMeta.offset + selectedPlaylistMeta.limit;
+    let stillFetchingTracks = true;
+
+    while (stillFetchingTracks) {
+      let [newTracks, newMeta] = await lookupTracks(
+        accessToken,
+        selectedPlaylist.id,
+        currentOffset
+      );
+
+      // https://open.spotify.com/playlist/34xwiVguSZKYwBOK1WdZD5?si=ecdcd608a7ee4265
+
+      stillFetchingTracks = !!newMeta.next;
+      tracks = [...tracks, ...newTracks];
+      currentOffset = newMeta.offset + newMeta.limit;
+    }
   }
 
   return {

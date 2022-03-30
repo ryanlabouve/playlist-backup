@@ -482,16 +482,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-bottom: 0.5rem;
 }
 
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
 
 .mr-3 {
   margin-right: 0.75rem;
-}
-
-.mb-3 {
-  margin-bottom: 0.75rem;
 }
 
 .flex {
@@ -670,11 +670,6 @@ body {
 
 .focus\:border-transparent:focus {
   border-color: transparent;
-}
-
-.focus\:outline-none:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
 }
 
 .focus\:ring-0:focus {
