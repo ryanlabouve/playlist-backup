@@ -10,7 +10,7 @@ export interface PlaylistItemImg {
 export interface Playlist {
   href: string;
   id: string;
-  images: PlaylistItemImg[];
+  images?: PlaylistItemImg[];
   name: string;
 }
 
@@ -22,4 +22,13 @@ export interface Track {
   duration_ms: string;
   preview_url: string;
   uri: string;
+}
+
+export interface PlaylistMeta {
+  offset: number;
+  previous: string;
+  next: string;
+  limit: string;
+  href: string;
+  total: number;
 }

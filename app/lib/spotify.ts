@@ -1,9 +1,8 @@
-import type { Playlist, Track } from "~/types/all";
+import type { Playlist, Track, PlaylistMeta } from "~/types/all";
 async function lookupUser(accessToken: string) {
   let repsonse: Response = await fetch("https://api.spotify.com/v1/me", {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
-  debugger;
   let json = await repsonse.json();
   return json;
 }
@@ -33,11 +32,14 @@ async function lookupPlaylists(
 
 async function lookupTracks(
   accessToken: string,
-  playlistId: string
-): Promise<Track[]> {
+  playlistId: string,
+  offset2?: number
+): Promise<[Track[], PlaylistMeta]> {
+  offset2 = offset2 || 0;
+
   // https://developer.spotify.com/documentation/web-api/reference/#/operations/get-playlists-tracks
   let response: Response = await fetch(
-    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+    `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=50&offset=${offset2}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -46,8 +48,21 @@ async function lookupTracks(
   );
 
   let json = await response.json();
-  //@ts-ignore
-  return json.items.map((i) => i.track);
+
+  let { offset, previous, next, limit, href, total } = json;
+
+  return [
+    // @ts-ignore
+    json.items.map((i) => i.track),
+    {
+      offset,
+      previous,
+      next,
+      limit,
+      href,
+      total,
+    },
+  ];
 }
 
 function lookupSamplePlaylists(accessToken: string): Playlist[] {
@@ -55,4 +70,80 @@ function lookupSamplePlaylists(accessToken: string): Playlist[] {
   return samplePlaylists.items;
 }
 
-export { lookupUser, lookupPlaylists, lookupSamplePlaylists, lookupTracks };
+/**
+ *
+ * @param uri https://open.spotify.com/playlist/34xwiVguSZKYwBOK1WdZD5?si=ecdcd608a7ee4265
+ * @returns Playlist[]
+ */
+async function getPlaylistByUri(
+  accessToken: string,
+  uri: string
+): Promise<[Error | null, Playlist | null, Tracks[] | null]> {
+  let playlistId: string | undefined = uri?.split("/").at(-1);
+  playlistId = playlistId?.split("?").at(0);
+  let response: Response = await fetch(
+    `https://api.spotify.com/v1/playlists/${playlistId}?limit=50`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  if (response.status === 401) {
+    return [new Error(`${response.status}`), null, null];
+  }
+
+  let json = await response.json();
+  let items = json?.tracks?.items;
+  //@ts-ignore
+  let tracks: Track[] = items.map((p) => p.track);
+
+  return [
+    null,
+    {
+      href: json.href,
+      id: json.id,
+      images: json.images,
+      name: json.name,
+    },
+    tracks,
+  ];
+}
+
+/**
+ * Terrible function that stiches an arbitrary amount of track JSON into
+ * one bigish blob
+ *
+ * @param accessToken
+ * @param playlistId
+ */
+async function prepareBackup(
+  accessToken: string,
+  initialTracks: Track[],
+  selectedPlaylist: Playlist,
+  selectedPlaylistMeta: PlaylistMeta
+): Promise<any> {
+  let tracks = initialTracks || [];
+
+  if (selectedPlaylistMeta.next) {
+    // Build more tracks
+  }
+
+  return {
+    playlist: {
+      ...selectedPlaylist,
+      ...selectedPlaylistMeta,
+    },
+    tracks,
+  };
+}
+
+export {
+  lookupUser,
+  lookupPlaylists,
+  lookupSamplePlaylists,
+  lookupTracks,
+  getPlaylistByUri,
+  prepareBackup,
+};
