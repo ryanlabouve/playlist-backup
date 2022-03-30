@@ -28,7 +28,7 @@ export default function Login() {
             className="btn"
             href={`${data.SPOTIFY_AUTH_ENDPOINT}?client_id=${data.SPOTIFY_CLIENT_ID}&redirect_uri=${host}&response_type=${data.SPOTIFY_RESPONSE_TYPE}`}
           >
-            <div className="bobble"></div> Logout Login to Spotify
+            <div className="bobble"></div> Login to Spotify
           </a>
         </div>
       </div>
