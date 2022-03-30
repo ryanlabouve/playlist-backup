@@ -1,59 +1,14 @@
 import { useEffect, useState } from "react";
 import { useContext } from "react";
 import { UserContext } from "~/contexts/user-context";
-import samplePlaylists from "~/utils/sample-playlists";
 import type { Playlist, Track } from "~/types/all";
 import PlaylistSelector from "./playlist-selector";
 
-async function lookupUser(accessToken: string) {
-  let repsonse: Response = await fetch("https://api.spotify.com/v1/me", {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  let json = await repsonse.json();
-  return json;
-}
-async function lookupPlaylists(accessToken: string): Promise<Playlist[]> {
-  let response: Response = await fetch(
-    `https://api.spotify.com/v1/me/playlists?limit=50`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
-
-  let json = await response.json();
-  let items = json.items;
-  items = items.map((p) => p.track);
-
-  return json.items;
-}
-
-async function lookupTracks(
-  accessToken: string,
-  playlistId: string
-): Promise<Track[]> {
-  // https://developer.spotify.com/documentation/web-api/reference/#/operations/get-playlists-tracks
-  let response: Response = await fetch(
-    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
-
-  let json = await response.json();
-  return json.items.map((i) => i.track);
-}
-
-function lookupSamplePlaylists(accessToken: string): Playlist[] {
-  // @ts-ignore
-  return samplePlaylists.items;
-}
+import { lookupPlaylists, lookupTracks } from "~/lib/spotify";
+import Bars from "./bars";
 
 export default function BackupWizard() {
-  const { user } = useContext(UserContext);
+  const { user, logout } = useContext(UserContext);
   const [selectedPlaylistTracks, setSelectedPlaylistTracks] = useState<Track[]>(
     []
   );
@@ -61,15 +16,23 @@ export default function BackupWizard() {
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist>();
 
   useEffect(() => {
-    if (!user.accessToken) {
+    if (!user || !user.accessToken) {
       return;
     }
 
-    setPlaylists(lookupSamplePlaylists(user.accessToken));
-  }, [user.accessToken]);
+    lookupPlaylists(user.accessToken).then(
+      ([e, pls]: [null | Error, Playlist[]]) => {
+        if (e !== null) {
+          logout();
+          return;
+        }
+        pls && setPlaylists(pls);
+      }
+    );
+  }, [user]);
 
   useEffect(() => {
-    if (!user.accessToken || !selectedPlaylist) {
+    if (!user?.accessToken || !selectedPlaylist) {
       return;
     }
     lookupTracks(user.accessToken, selectedPlaylist.id).then((t: Track[]) =>
@@ -78,36 +41,22 @@ export default function BackupWizard() {
   }, [selectedPlaylist]);
 
   return (
-    <div className="flex p-12">
+    <div className="flex p-12 m-auto max-w-5xl w-full">
       <div className="p-3 panel-bg">
         <div className="text-center uppercase indent-text flex justify-center align-middle items-center">
-          <svg
-            width="150"
-            height="6"
-            viewBox="0 0 150 6"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect y="3" width="150" height="3" fill="#CEBB77" />
-            <rect width="150" height="3" fill="#9F915C" />
-          </svg>
+          <Bars />
           <div className="mx-4">Spotify Backup</div>
-          <svg
-            width="150"
-            height="6"
-            viewBox="0 0 150 6"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect y="3" width="150" height="3" fill="#CEBB77" />
-            <rect width="150" height="3" fill="#9F915C" />
-          </svg>
+          <Bars />
         </div>
         <div className="flex  items-center align-middle">
           <div>
-            <div className="dark-boubble">999</div>Boop
+            <div className="dark-boubble">
+              {playlists?.length ? playlists.length : "000"}
+            </div>{" "}
+            Playlists
           </div>
-          <button className="btn my-2">
+          <div className="flex-grow"></div>
+          <button className="btn my-2" onClick={() => logout()}>
             <div className="bobble"></div> Logout
           </button>
         </div>
@@ -129,10 +78,23 @@ export default function BackupWizard() {
       </div>
 
       <div className="p-3 panel-bg border-l-gray-900 border-l-2 w-96">
-        <div className="text-center pb-2 uppercase">
-          {selectedPlaylist ? selectedPlaylist.name : "Select a playlist"}
+        <div className="text-center  uppercase">
+          {selectedPlaylist
+            ? `Viewing ${selectedPlaylist.name}`
+            : "Select a playlist"}
         </div>
-
+        <div className="flex  items-center align-middle">
+          <div>
+            <div className="dark-boubble">
+              {selectedPlaylistTracks?.length
+                ? selectedPlaylistTracks.length
+                : "000"}
+            </div>{" "}
+            Songs
+          </div>
+          <div className="flex-grow"></div>
+          <button className="btn my-2">Prepare Backup</button>
+        </div>
         <div className="bg-gray-900 p-0.5">
           <div className="p-3 panel-bg">
             <div className="panel-bg-dark p-3">

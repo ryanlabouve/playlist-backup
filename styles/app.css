@@ -62,11 +62,16 @@ body {
 }
 
 .dark-boubble {
-  @apply mr-0 nerd-green inline-block py-0.5 px1 leading-tight;
+  @apply mr-0 nerd-green inline-block py-0.5 px-1 leading-tight;
 
   background: linear-gradient(111.68deg, #232323 1.12%, #000000 100%);
 
   box-shadow: inset -1px 0px 0px rgba(255, 255, 255, 0.2),
     inset 0px -1px 0px rgba(255, 255, 255, 0.2),
     inset 1px 0px 0px rgba(0, 0, 0, 0.55), inset 0px 1px 0px rgba(0, 0, 0, 0.4);
+}
+
+.playlist-row:hover {
+  @apply cursor-pointer;
+  background-color: rgba(0, 255, 0, 0.2);
 }

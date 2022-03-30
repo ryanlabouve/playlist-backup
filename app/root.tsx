@@ -7,32 +7,51 @@ import {
   ScrollRestoration,
 } from "remix";
 
-import { json, useLoaderData } from "remix";
-
-import type { LoaderFunction } from "remix";
-
 import type { MetaFunction } from "remix";
 import { UserContext } from "./contexts/user-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { User } from "~/types/all";
 
 export const meta: MetaFunction = () => {
   return { title: "New Remix App" };
 };
 
-export const loader: LoaderFunction = async () => {
-  return json({
-    SPOTIFY_AUTH_ENDPOINT: process.env.SPOTIFY_AUTH_ENDPOINT,
-  });
-};
 import styles from "./styles/app.css";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
 }
+
+function clearUserFromLocalStorage() {
+  // TODO: Move to Cookie
+  window.localStorage.setItem("token", "");
+}
+
 export default function App() {
-  const data = useLoaderData();
   const [user, setUser] = useState<User>({});
+  useEffect(() => {
+    const hash: string = window?.location?.hash || "";
+    let token: string = window.localStorage.getItem("token")
+      ? `${window.localStorage.getItem("token")}`
+      : "";
+
+    if (!token && hash) {
+      // @ts-ignore
+      token = hash
+        .substring(1)
+        .split("&")
+        .find((elem) => elem.startsWith("access_token"))
+        .split("=")[1];
+
+      window.location.hash = "";
+      window.localStorage.setItem("token", token);
+    }
+
+    setUser({
+      accessToken: token,
+    });
+  }, [user.accessToken]);
+
   return (
     <html lang="en">
       <head>
@@ -42,14 +61,18 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContext.Provider
+          value={{
+            user,
+            setUser,
+            logout: () => {
+              clearUserFromLocalStorage();
+              setUser({});
+            },
+          }}
+        >
           <Outlet />
         </UserContext.Provider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
-          }}
-        />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

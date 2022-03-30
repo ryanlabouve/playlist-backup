@@ -468,6 +468,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-backdrop-sepia:  ;
 }
 
+.m-auto {
+  margin: auto;
+}
+
 .mx-4 {
   margin-left: 1rem;
   margin-right: 1rem;
@@ -492,6 +496,22 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .w-96 {
   width: 24rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.max-w-3xl {
+  max-width: 48rem;
+}
+
+.max-w-5xl {
+  max-width: 64rem;
+}
+
+.flex-grow {
+  flex-grow: 1;
 }
 
 .items-center {
@@ -629,12 +649,21 @@ body {
 }
 
 .dark-boubble {
-  margin-right: 0.5rem;
+  margin-right: 0px;
   display: inline-block;
-  padding: 0.25rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  line-height: 1.25;
   color: #21d635;
   background: linear-gradient(111.68deg, #232323 1.12%, #000000 100%);
   box-shadow: inset -1px 0px 0px rgba(255, 255, 255, 0.2),
     inset 0px -1px 0px rgba(255, 255, 255, 0.2),
     inset 1px 0px 0px rgba(0, 0, 0, 0.55), inset 0px 1px 0px rgba(0, 0, 0, 0.4);
+}
+
+.playlist-row:hover {
+  cursor: pointer;
+  background-color: rgba(0, 255, 0, 0.2);
 }
