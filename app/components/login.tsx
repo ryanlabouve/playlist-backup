@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Bars from "./bars";
 
 const data = {
@@ -7,6 +8,10 @@ const data = {
   SPOTIFY_RESPONSE_TYPE: "token",
 };
 export default function Login() {
+  let [host, setHost] = useState("");
+  useEffect(() => {
+    setHost(window?.location?.origin || data.SPOTIFY_REDIRECT_URI);
+  }, []);
   return (
     <div className="" style={{ width: 320, margin: " 128px auto" }}>
       <div className="p-3 panel-bg">
@@ -21,7 +26,7 @@ export default function Login() {
         <div className="">
           <a
             className="btn"
-            href={`${data.SPOTIFY_AUTH_ENDPOINT}?client_id=${data.SPOTIFY_CLIENT_ID}&redirect_uri=${data.SPOTIFY_REDIRECT_URI}&response_type=${data.SPOTIFY_RESPONSE_TYPE}`}
+            href={`${data.SPOTIFY_AUTH_ENDPOINT}?client_id=${data.SPOTIFY_CLIENT_ID}&redirect_uri=${host}&response_type=${data.SPOTIFY_RESPONSE_TYPE}`}
           >
             <div className="bobble"></div> Logout Login to Spotify
           </a>
